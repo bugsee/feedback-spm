@@ -1,0 +1,58 @@
+// swift-tools-version:5.9
+//
+//  Package.swift
+//  BugseeFeedback
+//
+//  Copyright © 2026 Bugsee. All rights reserved.
+//
+//  The Bugsee Feedback add-on: an optional, SwiftUI-based in-app feedback/chat
+//  module delivered as a separate Swift package on top of the core Bugsee SDK.
+//
+
+import PackageDescription
+
+let package = Package(
+    name: "BugseeFeedback",
+    platforms: [
+        // Matches the core SDK's minimum deployment target.
+        .iOS(.v15),
+    ],
+    products: [
+        // Both targets are vended: the Swift feature, and a small Objective-C shim whose
+        // `+load` registers it with the core SDK automatically. Hosts that prefer explicit
+        // control can call `BugseeFeedback.register()` themselves -- registration is
+        // idempotent, so doing both is harmless.
+        .library(
+            name: "BugseeFeedback",
+            targets: ["BugseeFeedback", "BugseeFeedbackAutoRegister"]),
+    ],
+    dependencies: [
+        // The core Bugsee SDK: a binary xcframework, vended by the bugsee/spm package.
+        //
+        // A beta pins it exactly. The add-on is released together with the core and calls
+        // into its API, so letting the core move on its own underneath an installed beta
+        // is the one thing this must not allow.
+        .package(url: "https://github.com/bugsee/spm", exact: "7.0.0-beta6"),
+    ],
+    targets: [
+        .target(
+            name: "BugseeFeedback",
+            dependencies: [
+                .product(name: "Bugsee", package: "spm"),
+            ],
+            path: "Sources/BugseeFeedback",
+            // Apple reads the privacy manifest from the root of the target's resource
+            // bundle. It declares what this add-on collects -- the text a user types into
+            // the chat, and the identity those messages are attributed to -- which the
+            // core SDK's own manifest does not cover.
+            resources: [.copy("PrivacyInfo.xcprivacy")]),
+        // The auto-registration shim. It depends on the Swift target so it can
+        // `@import BugseeFeedback;` and call `[BugseeFeedback register]` at image load.
+        .target(
+            name: "BugseeFeedbackAutoRegister",
+            dependencies: [
+                "BugseeFeedback",
+            ],
+            path: "Sources/BugseeFeedbackAutoRegister"),
+    ]
+)
