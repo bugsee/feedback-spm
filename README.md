@@ -20,8 +20,8 @@ Add both packages to your `Package.swift`, or via Xcode's Swift Package Manager 
 at the same exact version:
 
 ```swift
-.package(url: "https://github.com/bugsee/spm",          exact: "7.0.0"),
-.package(url: "https://github.com/bugsee/feedback-spm", exact: "7.0.0"),
+.package(url: "https://github.com/bugsee/spm",          exact: "7.0.1"),
+.package(url: "https://github.com/bugsee/feedback-spm", exact: "7.0.1"),
 ```
 
 Then add `Bugsee` and `BugseeFeedback` as dependencies of your app target. When you

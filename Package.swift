@@ -33,7 +33,7 @@ let package = Package(
         // the core release of the same version and is built against that core's add-on
         // interface (`Bugsee.SPI`), which is not app API and may change in any core
         // release. A version range would let the core move on its own underneath the add-on.
-        .package(url: "https://github.com/bugsee/spm", exact: "7.0.0"),
+        .package(url: "https://github.com/bugsee/spm", exact: "7.0.1"),
     ],
     targets: [
         .target(
